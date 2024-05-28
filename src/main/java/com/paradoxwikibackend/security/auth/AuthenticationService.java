@@ -1,5 +1,6 @@
 package com.paradoxwikibackend.security.auth;
 
+import com.paradoxwikibackend.exception.EmailAlreadyRegisteredException;
 import com.paradoxwikibackend.security.config.JwtService;
 import com.paradoxwikibackend.security.user.Role;
 import com.paradoxwikibackend.security.user.User;
@@ -10,6 +11,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -17,7 +20,13 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+
     public AuthenticationResponse register(RegisterRequest request) {
+        // Check if the email is already registered
+        var existingUser = repository.findByEmail(request.getEmail());
+        if (existingUser.isPresent()) {
+            throw new EmailAlreadyRegisteredException("Email already registered");
+        }
         var user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
@@ -46,5 +55,13 @@ public class AuthenticationService {
                 .builder()
                 .token(jwtToken)
                 .build();
+    }
+    public VerifyResponse verify(VerifyRequest request) {
+        String token = request.getToken();
+        if (!jwtService.isTokenExpired(token)) {
+            return new VerifyResponse(true);
+        } else {
+            return new VerifyResponse(false);
+        }
     }
 }
