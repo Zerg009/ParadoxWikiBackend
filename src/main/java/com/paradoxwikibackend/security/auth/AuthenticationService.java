@@ -2,16 +2,14 @@ package com.paradoxwikibackend.security.auth;
 
 import com.paradoxwikibackend.exception.EmailAlreadyRegisteredException;
 import com.paradoxwikibackend.security.config.JwtService;
-import com.paradoxwikibackend.security.user.Role;
-import com.paradoxwikibackend.security.user.User;
-import com.paradoxwikibackend.security.user.UserRepository;
+import com.paradoxwikibackend.model.user.Role;
+import com.paradoxwikibackend.model.user.User;
+import com.paradoxwikibackend.model.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -58,6 +56,9 @@ public class AuthenticationService {
     }
     public VerifyResponse verify(VerifyRequest request) {
         String token = request.getToken();
+        if(token == null || token.isEmpty())
+            return new VerifyResponse(false);
+
         if (!jwtService.isTokenExpired(token)) {
             return new VerifyResponse(true);
         } else {

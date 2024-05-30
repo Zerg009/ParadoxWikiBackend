@@ -1,4 +1,4 @@
-package com.paradoxwikibackend.security.user;
+package com.paradoxwikibackend.model.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

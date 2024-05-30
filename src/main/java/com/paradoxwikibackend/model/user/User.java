@@ -1,5 +1,7 @@
-package com.paradoxwikibackend.security.user;
+package com.paradoxwikibackend.model.user;
 
+import com.paradoxwikibackend.model.ParadoxInfo;
+import com.paradoxwikibackend.model.UserHistory;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +11,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,11 +19,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="_user")
+@Table(name = "_user")
 public class User implements UserDetails {
     @Id
     @GeneratedValue
-    private Integer id;
+    @Column(name = "userId")
+    private Integer userId;
     private String firstName;
     private String lastName;
     private String email;
@@ -36,10 +38,24 @@ public class User implements UserDetails {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
+    // Relationship with favorite paradoxes
+    @ManyToMany
+    @JoinTable(
+            name = "user_favorites",
+            joinColumns = @JoinColumn(name = "userId"),
+            inverseJoinColumns = @JoinColumn(name = "paradox_id")
+    )
+    private List<ParadoxInfo> favoriteParadoxes;
+
+    // Relationship with browsing history
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserHistory> browsingHistory;
+
     @Override
     public String getUsername() {
         return email;
     }
+
     @Override
     public String getPassword() {
         return password;
