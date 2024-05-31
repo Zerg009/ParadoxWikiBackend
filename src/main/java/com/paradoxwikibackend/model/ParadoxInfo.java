@@ -21,8 +21,6 @@ public class ParadoxInfo {
     String description;
     @Column(name = "tech_name")
     String tech_name;
-    @Column(name = "is_favorite")
-    String is_favorite;
 
     public ParadoxInfo() {
     }

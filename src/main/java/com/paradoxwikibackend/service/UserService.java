@@ -33,8 +33,6 @@ public class UserService {
         this.userHistoryRepository = userHistoryRepository;
     }
 
-
-
     @Transactional
     public DefaultResponse addFavoriteParadox(Integer userId, Integer paradoxId) {
         Optional<User> userOpt = userRepository.findById(userId);
@@ -55,6 +53,30 @@ public class UserService {
         return new DefaultResponse("Paradox added to favorites successfully");
     }
 
+    @Transactional
+    public DefaultResponse removeFavoriteParadox(Integer userId, Integer paradoxId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        Optional<ParadoxInfo> paradoxOpt = paradoxInfoRepository.findById(paradoxId);
+
+        if (userOpt.isEmpty()) {
+            throw new UserNotFoundException("User not found");
+        }
+        if (paradoxOpt.isEmpty()) {
+            throw new ParadoxNotFoundException("Paradox not found");
+        }
+
+        User user = userOpt.get();
+        ParadoxInfo paradox = paradoxOpt.get();
+
+        // Remove the paradox from the user's favorite paradoxes
+        if (!user.getFavoriteParadoxes().remove(paradox)) {
+            return new DefaultResponse("Paradox was not in favorites");
+        }
+
+        userRepository.save(user);
+
+        return new DefaultResponse("Paradox removed from favorites successfully");
+    }
     @Transactional(readOnly = true)
     public List<ParadoxInfo> getFavoriteParadoxes(Integer userId) {
         Optional<User> userOpt = userRepository.findById(userId);
