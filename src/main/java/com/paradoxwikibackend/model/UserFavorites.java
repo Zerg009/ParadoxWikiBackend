@@ -13,7 +13,7 @@ public class UserFavorites {
     private int favorite_id;
 
     @ManyToOne
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne

@@ -1,7 +1,9 @@
 package com.paradoxwikibackend.model.user;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.paradoxwikibackend.model.ParadoxInfo;
 import com.paradoxwikibackend.model.UserHistory;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +25,7 @@ import java.util.List;
 public class User implements UserDetails {
     @Id
     @GeneratedValue
-    @Column(name = "userId")
+    @Column(name = "user_id")
     private Integer userId;
     private String firstName;
     private String lastName;
@@ -42,13 +44,15 @@ public class User implements UserDetails {
     @ManyToMany
     @JoinTable(
             name = "user_favorites",
-            joinColumns = @JoinColumn(name = "userId"),
+            joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "paradox_id")
     )
+    @JsonManagedReference
     private List<ParadoxInfo> favoriteParadoxes;
 
     // Relationship with browsing history
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<UserHistory> browsingHistory;
 
     @Override

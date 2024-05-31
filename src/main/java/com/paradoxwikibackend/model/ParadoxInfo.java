@@ -1,5 +1,6 @@
 package com.paradoxwikibackend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.paradoxwikibackend.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -28,5 +29,6 @@ public class ParadoxInfo {
 
     // Relationship with users who have favorited this paradox
     @ManyToMany(mappedBy = "favoriteParadoxes")
+    @JsonBackReference
     private List<User> favoritedByUsers;
 }

@@ -1,5 +1,6 @@
 package com.paradoxwikibackend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.paradoxwikibackend.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -17,11 +18,13 @@ public class UserHistory {
     private int history_id;
 
     @ManyToOne
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "paradox_id")
+    @JsonBackReference
     private ParadoxInfo paradox;
 
     private Date visitTimestamp;

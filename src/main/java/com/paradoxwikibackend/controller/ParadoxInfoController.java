@@ -2,7 +2,6 @@ package com.paradoxwikibackend.controller;
 
 import com.paradoxwikibackend.exception.DefaultResponse;
 import com.paradoxwikibackend.exception.UserNotAuthenticated;
-import com.paradoxwikibackend.exception.UserNotFoundException;
 import com.paradoxwikibackend.model.ParadoxInfo;
 import com.paradoxwikibackend.model.UserHistory;
 import com.paradoxwikibackend.repository.ParadoxInfoRepository;
@@ -16,7 +15,7 @@ import com.paradoxwikibackend.model.user.User;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/")
+@RequestMapping("/api/v1")
 public class ParadoxInfoController {
     private final ParadoxInfoRepository paradoxInfoRepository;
 
@@ -36,20 +35,20 @@ public class ParadoxInfoController {
     public ParadoxInfo createParadoxInfo(@RequestBody ParadoxInfo paradoxInfo){
         return paradoxInfoRepository.save(paradoxInfo);
     }
-    @PostMapping("/add_favorite/{paradoxId}")
+    @PostMapping("/user/add_favorite/{paradoxId}")
     public ResponseEntity<DefaultResponse> addFavorite(@PathVariable Integer paradoxId) {
         User currentUser = getCurrentUser();
         return ResponseEntity.ok(userService.addFavoriteParadox(currentUser.getUserId(), paradoxId));
     }
 
-    @GetMapping("/favorites")
+    @GetMapping("/user/favorites")
     public ResponseEntity<List<ParadoxInfo>> getFavoriteParadoxes() {
         User currentUser = getCurrentUser();
         List<ParadoxInfo> favoriteParadoxes = userService.getFavoriteParadoxes(currentUser.getUserId());
         return ResponseEntity.ok(favoriteParadoxes);
     }
 
-    @GetMapping("/history")
+    @GetMapping("/user/history")
     public ResponseEntity<List<UserHistory>> getUserHistory() {
         User currentUser = getCurrentUser();
         List<UserHistory> userHistory = userService.getUserHistory(currentUser.getUserId());
